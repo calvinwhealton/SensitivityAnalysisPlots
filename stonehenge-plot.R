@@ -6,7 +6,7 @@
 library(RColorBrewer)
 
 # setting working directory-----
-setwd("/Users/calvinwhealton/GitHub/SensitivityAnalysisPlots")
+setwd("/Users/calvinwhealton/GitHub/SAPlots")
 
 ## importing data from sensitivity analysis----
 # importing first- and total-order indices
@@ -80,12 +80,14 @@ s1st$y_val <- s1st$rad*sin(s1st$ang)
 ## plotting results----
 
 # colors and scales used in plots
+scaling <- 5 # scaling of the circiles
+line_scaling <- 10*scaling
+
 line_col <- "gray48"
-line_scale <- 4
 
 tot_col <- "black"
-s1_col <- "purple"
-circle_scale <- 4
+s1_col <- "gray48"
+
 
 
 
@@ -97,7 +99,8 @@ plot(NA
      , xaxt = 'n'
      , yaxt = 'n'
      , xlab = ''
-     , ylab = '')
+     , ylab = ''
+     , asp=1)
 
 # plotting all lines that were significant
 for(i in 1:nrow(s1st)){
@@ -106,7 +109,7 @@ for(i in 1:nrow(s1st)){
       lines(c(s1st$x_val[i],s1st$x_val[j])
             , c(s1st$y_val[i],s1st$y_val[j])
             , col=line_col
-            , lwd = line_scale*sqrt(s2[j,i])
+            , lwd = line_scaling*sqrt(s2[j,i])
             , lty=1)
     }
   }
@@ -117,13 +120,13 @@ points(s1st$x_val
        , s1st$y_val
        , col = tot_col
        , pch = 19
-       , cex = tot_scale*sqrt(s1st$ST))
+       , cex = scaling*sqrt(s1st$ST))
 # plotting the total-order indices
 points(s1st$x_val
        , s1st$y_val
        , col = "white"
        , pch = 19
-       , cex = tot_scale*sqrt(s1st$ST)*0.95)
+       , cex = scaling*sqrt(s1st$ST)*0.95)
 
 # plotting the total-order indices
 # plotting the total-order indices
@@ -131,7 +134,7 @@ points(s1st$x_val
        , s1st$y_val
        , col = s1_col
        , pch = 19
-       , cex = tot_scale*sqrt(s1st$S1)*s1st$s1_sig)
+       , cex = scaling*sqrt(s1st$S1)*s1st$s1_sig)
 
 for(i in 1:nrow(s1st)){
   text(1.2*s1st$rad[i]*cos(s1st$ang[i]), 1.2*s1st$rad[i]*sin(s1st$ang[i])
