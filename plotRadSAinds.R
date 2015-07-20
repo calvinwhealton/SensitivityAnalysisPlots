@@ -8,16 +8,18 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
                        ,plotType = 'EPS'    # plot type
                        ,plotS2 = TRUE       # whether to plot S2 indices
                        ,radSc = 2           # radius scaling of entire plot
-                       ,scaling=5           # scaling factor for plot
+                       ,scaling=1           # scaling factor for plot
                        ,widthSc = 0.5       # power used in scaling width, 0.5 is root, 1 is simple multiple
                        ,STthick = 0.05      # value used in determining the width of the ST circle
-                       ,line_sc_mult=10     # multiplier of scaling for the line width
                        ,line_col ='gray48'  # color used for lines
                        ,st_col = 'black'    # color for total-order index circle
                        ,s1_col = 'gray48'   # color for first-order index disk(filled circle)
                        ,asp=1               # aspect ratio
                        ,varNameMult = 1.2   # location of variable name with respect to the plot radius
                        ,gpNameMult = 1.6    # location of the group name with respect to the plot radius
+                       ,legLoc = 'topleft'  # legend location
+                       ,legThick=c(0.1,0.5) # legend thickensses
+                       ,legPos=1.9          # legend relative position
                        ){
   
   # finding number of points to plot
@@ -68,31 +70,6 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
     setEPS()
     postscript(fname)
   }
-#   else if(plotType == 'JPG'){
-#     fname <- paste(filename,'.jpg',sep='')
-#     savePlot <- TRUE
-#     jpeg(file=fname)
-#   }
-#   else if(plotType == 'TIFF'){
-#     fname <- paste(filename,'.tiff',sep='')
-#     savePlot <- TRUE
-#     tiff(file=fname)
-#   }
-#   else if(plotType == 'PDF'){
-#     fname <- paste(filename,'.pdf',sep='')
-#     savePlot <- TRUE
-#     pdf(file=fname)
-#   }
-#   else if(plotType == 'PNG'){
-#     fname <- paste(filename,'.png',sep='')
-#     savePlot <- TRUE
-#     png(file=fname)
-#   }
-#   else if(plotType == 'BMP'){
-#     fname <- paste(filename,'.bmp',sep='')
-#     savePlot <- TRUE
-#     bmp(file=fname)
-#   }
   else{
     print('Plot not automatically saved')
     savePlot <- FALSE
@@ -114,52 +91,93 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
   if(plotS2 == TRUE){
     for(i in 1:nrow(s2_sig)){
       for(j in 1:nrow(s2_sig)){
-        if(s2_sig[j,i] == 1){
-          lines(c(df$x_val[i],df$x_val[j])
-                , c(df$y_val[i],df$y_val[j])
-                , col=line_col
-                , lwd = line_scaling*((s2[j,i])^widthSc)
-                , lty=1
-          )
+        # only plot second order when the two indices are significant
+        if(s2_sig[j,i]*(df$sig[i]*df$sig[j]) == 1){
+          
+          # coordinates of the center line
+          clx <- c(df$x_val[i],df$x_val[j])
+          cly <- c(df$y_val[i],df$y_val[j])
+          
+          # calculating the angle of the center line
+          # calculating tangent as opposite (difference in y) 
+          # divided by adjacent (difference in x)
+          clAngle1 <- atan((cly[2]-cly[1])/(clx[2]-clx[1]))
+          
+          # adding angle when both values are negative to make it on (-pi/2,3*pi/2)
+          if(cly[2]-cly[1] < 0){
+            clAngle1 <- clAngle1 + pi
+          }
+          
+          # half width of the line
+          line_hw <- scaling*(s2[j,i]^widthSc)/2
+          
+          # creating vector of polygon coordinates
+          polyx <- rep(0,4)
+          polyy <- rep(0,4)
+          
+          polyx[1] <- clx[1] - line_hw*sin(clAngle1)
+          polyx[2] <- clx[1] + line_hw*sin(clAngle1)
+          polyx[3] <- clx[2] + line_hw*sin(clAngle1)
+          polyx[4] <- clx[2] - line_hw*sin(clAngle1)
+          
+          polyy[1] <- cly[1] + line_hw*cos(clAngle1)
+          polyy[2] <- cly[1] - line_hw*cos(clAngle1)
+          polyy[3] <- cly[2] - line_hw*cos(clAngle1)
+          polyy[4] <- cly[2] + line_hw*cos(clAngle1)
+          
+          # making polygons
+          polygon(polyx,polyy
+                  ,density=200
+                  ,border=NA
+                  ,col=line_col)
         }
       }
     }
   }
   
-  
-  # plotting the total-order indices
-  # plotting outer circle as a solid point
-  points(df$x_val
-         , df$y_val
-         , col = st_col
-         , pch = 19
-         , cex = scaling*((df$ST)^widthSc)
-         )
-  # plotting the total-order indices inner white circle to make outline
-  points(df$x_val
-         , df$y_val
-         , col = "white"
-         , pch = 19
-         , cex = scaling*(((df$ST)*(1-STthick))^widthSc)
-         )
-  
-  # plotting first-order indices
-  points(df$x_val
-         , df$y_val
-         , col = s1_col
-         , pch = 19
-         , cex = scaling*sqrt(df$S1^widthSc)*s1st$s1_sig
-         )
+  for(i in 1:nrow(df)){
+    if(df$sig[i] == 1){
+      
+      # circle for total order index
+      draw.circle(df$x_val[i]
+                  ,df$y_val[i]
+                  ,radius <- scaling*(df$ST[i]^widthSc)/2
+                  ,nv=200
+                  ,border=NA
+                  ,col=st_col
+                  )
+      
+      # white circle to make total-order an outline
+      draw.circle(df$x_val[i]
+                  ,df$y_val[i]
+                  ,radius <- (1-STthick)*scaling*(df$ST[i]^widthSc)/2
+                  ,nv=200
+                  ,border=NA
+                  ,col="white"
+                  )
+      
+      # gray circle for first-order
+      draw.circle(df$x_val[i]
+                  ,df$y_val[i]
+                  ,radius <- scaling*(df$S1[i]^widthSc)/2
+                  ,nv=200
+                  ,border=NA
+                  ,col=s1_col
+                  )   
+    }
+  }
   
   ## adding text to the plots
   # adding variable names
   for(i in 1:nrow(df)){
-    text(varNameMult*df$rad[i]*cos(df$ang[i]), varNameMult*df$rad[i]*sin(df$ang[i])
-         , df$ind[i]
-         , col = df$gp_col[i]
-         , srt = df$ang[i]*360/(2*pi)
-         , adj = 0 
-    )
+    if(is.na(df$ang[i]) == FALSE){
+      text(varNameMult*df$rad[i]*cos(df$ang[i]), varNameMult*df$rad[i]*sin(df$ang[i])
+           , df$ind[i]
+           , col = df$gp_col[i]
+           , srt = df$ang[i]*360/(2*pi)
+           , adj = 0 
+      )
+    }
   }
   
   # adding group names
@@ -178,6 +196,37 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
     )
   }
   
+  ## adding legend
+  if(legLoc == 'topleft'){
+    xloc <- rep(-legPos*radSc ,length(legThick))
+    yloc <- seq(legPos*radSc ,1*radSc ,by=-0.3*radSc )
+  }
+  else if(legLoc=='topright'){
+    xloc <- rep(legPos*radSc ,length(legThick))
+    yloc <- seq(legPos*radSc ,1*radSc ,by=-0.3*radSc )
+  }
+  else if(legLoc=='bottomleft'){
+    xloc <- rep(-legPos*radSc ,length(legThick))
+    yloc <- seq(-legPos*radSc ,-1*radSc ,by=0.3*radSc )
+  }
+  else{
+    xloc <- rep(legPos*radSc ,length(legThick))
+    yloc <- seq(-legPos*radSc ,-1*radSc ,by=0.3*radSc )
+  }
+  for(i in 1:length(xloc)){
+    # gray circle for legend
+    draw.circle(xloc[i]
+                ,yloc[i]
+                ,radius <- scaling*(legThick[i]^widthSc)/2
+                ,nv=200
+                ,border=NA
+                ,col=s1_col
+                )   
+    text(xloc[i]*0.8,yloc[i]
+         ,as.character(legThick[i])
+         ,col=s1_col)
+    }
+
   # closing plot if save to external file
   if(savePlot == TRUE){
     dev.off()
