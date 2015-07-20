@@ -3,7 +3,9 @@
 # and second-order indices as lines
 
 # libraries----
-library(RColorBrewer)
+library(RColorBrewer) # good color palettes
+library(graphics)     # used when plotting polygons
+library(plotrix)      # used when plotting circles
 
 # setting working directory-----
 setwd("/Users/calvinwhealton/GitHub/SAPlots")
@@ -11,6 +13,8 @@ setwd("/Users/calvinwhealton/GitHub/SAPlots")
 # functions in other files
 source('sigTests.R')
 source('groupAssign.R')
+source('plotRadSAinds.R')
+
 ## importing data from sensitivity analysis----
 # importing first- and total-order indices
 s1st1 <- read.csv("S1ST_output.csv"
@@ -91,84 +95,20 @@ s1st2 <- gp_name_col(name_list2
                      , col_list2
                      ,s1st2)
 
-## finding number of points to plot and locations----
+# plotting results
+plotRadCon(df=s1st1
+           ,s2=s21    
+           ,s2_sig=s2_sig1
+           ,filename = '' 
+           ,plotType = 'EPS'
+            )
+plotRadCon(df=s1st2
+           ,s2=s22   
+           ,s2_sig=s2_sig2
+           ,filename = 'example2' 
+           ,plotType = 'EPS'
+          )
 
-# coordinates in polar
-s1st$ang[group1_inds] <- angles[1:length(group1_inds)]
-s1st$ang[group2_inds] <- angles[(length(group1_inds)+1):(length(group1_inds)+length(group2_inds))]
-s1st$ang[group3_inds] <- angles[(length(group1_inds)+length(group2_inds)+1):(length(group1_inds)+length(group2_inds)+length(group3_inds))]
-
-# coordinates in cartesian
-s1st$x_val <- s1st$rad*cos(s1st$ang)
-s1st$y_val <- s1st$rad*sin(s1st$ang)
-
-## plotting results----
-
-# colors and scales used in plots
-scaling <- 5 # scaling of the circiles
-line_scaling <- 10*scaling
-
-line_col <- "gray48"
-
-tot_col <- "black"
-s1_col <- "gray48"
-
-
-
-
-# initial plot is empty
-plot(NA
-     , NA
-     , xlim = c(-4,4)
-     , ylim = c(-4,4)
-     , xaxt = 'n'
-     , yaxt = 'n'
-     , xlab = ''
-     , ylab = ''
-     , asp=1)
-
-# plotting all lines that were significant
-for(i in 1:nrow(s1st)){
-  for(j in 1:nrow(s1st)){
-    if(s2_sig[j,i] == 1){
-      lines(c(s1st$x_val[i],s1st$x_val[j])
-            , c(s1st$y_val[i],s1st$y_val[j])
-            , col=line_col
-            , lwd = line_scaling*sqrt(s2[j,i])
-            , lty=1)
-    }
-  }
-}
-
-# plotting the total-order indices
-points(s1st$x_val
-       , s1st$y_val
-       , col = tot_col
-       , pch = 19
-       , cex = scaling*sqrt(s1st$ST))
-# plotting the total-order indices
-points(s1st$x_val
-       , s1st$y_val
-       , col = "white"
-       , pch = 19
-       , cex = scaling*sqrt(s1st$ST)*0.95)
-
-# plotting the total-order indices
-# plotting the total-order indices
-points(s1st$x_val
-       , s1st$y_val
-       , col = s1_col
-       , pch = 19
-       , cex = scaling*sqrt(s1st$S1)*s1st$s1_sig)
-
-for(i in 1:nrow(s1st)){
-  text(1.2*s1st$rad[i]*cos(s1st$ang[i]), 1.2*s1st$rad[i]*sin(s1st$ang[i])
-       , s1st$ind[i]
-       , col = s1st$gp_col[i]
-       , srt = s1st$ang[i]*360/(2*pi)
-       , adj = 0
-       )
-}
 
 
 
