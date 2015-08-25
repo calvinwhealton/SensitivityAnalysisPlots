@@ -4,6 +4,7 @@
 plotRadCon <- function(df                   # dataframe with S1 and ST indices
                        ,s2                  # S2 indices
                        ,s2_sig              # S2 significance matrix
+                       ,title=''            # title for the plot
                        ,filename = 'plot'   # file name for the saved plot
                        ,plotType = 'EPS'    # plot type
                        ,plotS2 = TRUE       # whether to plot S2 indices
@@ -60,9 +61,6 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
   df$x_val <- df$rad*cos(df$ang)
   df$y_val <- df$rad*sin(df$ang)
   
-  # colors and scales used in plots
-  line_scaling <- line_sc_mult*scaling
-  
   ## file set-up storage
   if(plotType == 'EPS'){
     fname <- paste(filename,'.eps',sep='')
@@ -73,9 +71,10 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
   else{
     print('Plot not automatically saved')
     savePlot <- FALSE
-    
   }
   ## plotting
+  par(pty="s")
+  
   # initial plot is empty
   plot(NA
        , NA
@@ -85,7 +84,7 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
        , yaxt = 'n'
        , xlab = ''
        , ylab = ''
-       , asp=asp)
+       )
   
   # plotting all lines that were significant----
   if(plotS2 == TRUE){
@@ -199,11 +198,11 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
   ## adding legend
   if(legLoc == 'topleft'){
     xloc <- rep(-legPos*radSc ,length(legThick))
-    yloc <- seq(legPos*radSc ,1*radSc ,by=-0.3*radSc )
+    yloc <- seq(legPos*radSc,1*radSc,by=-0.3*radSc )
   }
   else if(legLoc=='topright'){
     xloc <- rep(legPos*radSc ,length(legThick))
-    yloc <- seq(legPos*radSc ,1*radSc ,by=-0.3*radSc )
+    yloc <- seq(legPos*radSc,1*radSc,by=-0.3*radSc )
   }
   else if(legLoc=='bottomleft'){
     xloc <- rep(-legPos*radSc ,length(legThick))
@@ -227,6 +226,12 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
          ,col=s1_col)
     }
 
+  ## adding title for the plot
+  text(0,1.8*radSc
+       ,labels=title
+       ,adj=0.5
+       ,cex=1.5)
+  
   # closing plot if save to external file
   if(savePlot == TRUE){
     dev.off()
