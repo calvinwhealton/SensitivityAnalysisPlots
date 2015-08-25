@@ -43,24 +43,24 @@ s2_conf2 <- read.csv("S2_conf_output.csv"
 
 ## determining which indices are statistically significant----
 # S1 & ST: using the confidence intervals
-s1st1 <- stat_sig_s1st(s1st1
-                      ,method="sig"
-                      ,sigCri='either')
+s1st1 <- stat_sig_s1st(df=s1st1
+                       ,method="sig"
+                       ,sigCri='either')
 
 # S1 & ST: using greater than a given value
-s1st2 <- stat_sig_s1st(s1st2
-                      ,method="gtr"
-                      ,greater=0.01
-                      ,sigCri='either')
+s1st2 <- stat_sig_s1st(df=s1st2
+                       ,method="gtr"
+                       ,greater=0.01
+                       ,sigCri='either')
 
 # S2: using the confidence intervals
-s2_sig1 <- stat_sig_s2(s2
-                       ,s2_conf
+s2_sig1 <- stat_sig_s2(s21
+                       ,s2_conf1
                        ,method='sig')
 
 # S2: using greater than a given value
-s2_sig2 <- stat_sig_s2(s2
-                       ,s2_conf
+s2_sig2 <- stat_sig_s2(s22
+                       ,s2_conf1
                        ,greater=0.01
                        ,method='gtr')
 
@@ -100,14 +100,14 @@ plotRadCon(df=s1st1
            ,s2=s21    
            ,s2_sig=s2_sig1
            ,filename = '' 
-           ,plotType = 'EPS'
-            )
+           ,plotType = ''
+           )
 plotRadCon(df=s1st2
            ,s2=s22   
            ,s2_sig=s2_sig2
            ,filename = 'example2' 
            ,plotType = 'EPS'
-          )
+           ,title='Example Plot')
 
 
 
