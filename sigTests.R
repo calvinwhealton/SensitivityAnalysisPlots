@@ -16,9 +16,10 @@
 # function for testing significance of S1 and ST
 # functions assume the confidence are for already defined type I error
 stat_sig_s1st <- function(df
-                     ,greater = 0.01
-                     ,method='sig'
-                     ,sigCri = 'either'){
+                          ,greater = 0.01
+                          ,method='sig'
+                          ,sigCri = 'either'
+                          ){
   
   # initializing columns for the statistical significance of indices
   df$s1_sig <- 0
@@ -28,13 +29,13 @@ stat_sig_s1st <- function(df
   # testing for statistical significance
   if(method == 'sig'){
     # testing for statistical significance using the confidence intervals
-    df$s1_sig[which(abs(s1st$S1) - s1st$S1_conf > 0)] <- 1
-    df$s1_sig[which(abs(s1st$ST) - s1st$ST_conf > 0)] <- 1
+    df$s1_sig[which(abs(df$S1) - df$S1_conf > 0)] <- 1
+    df$s1_sig[which(abs(df$ST) - df$ST_conf > 0)] <- 1
   }
   else if(method == 'gtr'){
     # finding indicies that are greater than the specified values
-    df$s1_sig[which(abs(s1st$S1) > greater)] <- 1
-    df$st_sig[which(abs(s1st$ST) > greater)] <- 1
+    df$s1_sig[which(abs(df$S1) > greater)] <- 1
+    df$st_sig[which(abs(df$ST) > greater)] <- 1
   }
   else{
     print('Not a valid parameter for method')
@@ -68,16 +69,16 @@ stat_sig_s2 <- function(dfs2
                           ,method='sig'){
    
   # initializing matrix to return values
-  s2_sig <- matrix(0,nrow(s2),ncol(s2))
+  s2_sig <- matrix(0,nrow(dfs2),ncol(dfs2))
   
   # testing for statistical significance
   if(method == 'sig'){
     # testing for statistical significance using the confidence intervals
-    s2_sig[which(abs(s2) - s2_conf > 0)] <- 1
+    s2_sig[which(abs(dfs2) - dfs2Conf > 0)] <- 1
   }
   else if(method == 'gtr'){
     # finding indicies that are greater than the specified values
-    s2_sig[which(abs(s2) > greater)] <- 1
+    s2_sig[which(abs(dfs2) > greater)] <- 1
   }
   else{
     print('Not a valid parameter for method')
