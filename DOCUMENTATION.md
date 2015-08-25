@@ -1,4 +1,6 @@
-The following document outlines the general structure and requirements of the code to create the first-, second-, and total-order sensitivity indices plots. Please lok at LICENSE.md and README.md before using the code. Functions in the scripts should have the inputs defined in the comments on the same line. The outline of the code follows the script 'radialConvergeTest.R'.
+The following document outlines the general structure and requirements of the code to create the first-, second-, and total-order sensitivity indices plots. Please lok at LICENSE.md and README.md before using the code. Look at 'example1.pdf' and 'example2.pdf' to determine if this code will generate the type of plot that you want.
+
+Functions in the scripts should have the inputs defined in the comments on the same line. The outline of the code follows the script 'radialConvergeTest.R'. I tried to heavily comment the code when necessary and make it approachable for users who have some familiarity with the plotting functions in R. If you have problems please check the example script and input files before contacting me or creating an issue.
 
 Step 0: Writing Sensitivity Analysis Output
 
@@ -27,3 +29,7 @@ The sensitivity analysis plots are done using the function in 'plotRadSAinds.R'.
 One important note is that the plot draws circles and rectangles, not lines and points. Use of circles and rectangles means that scaling should be exact compared to using lines and points.
 
 The default value used when determining the relative size (width) of the circles and rectangles is based on the square root of the sensitivity index. The square root is used because circles are viewed as area, so if the total order index is twice the first-order the outside circle should have an area that is twice the inside circle (radius of outside is a factor of \sqrt{2} larger). This same scaling is preserved in the rectangle widths. If you want to change this to linear scaling (width proportional to the index) then change 'widthSc' to 1.
+
+Step 5: Feedback
+
+If you find the funcions useful or have suggestions about how they can be improved, please let me know. I appreciate the beta testers who are willing to find ways for me to make the code more useful and user-friendly. If you have other functions that would be useful (formatting of sensitivity analysis from other packages into the desired format or fancy graphical effects) please let me know and I will add you as a collaborator.
