@@ -4,4 +4,6 @@ This code is designed to generate plots that show the results of sensitivity ana
 
 There are many many options for determining what points will be plotted or adjusting the plot. The code is designed to have default parameters that are reasonably specified so the output looks acceptable. The input data to this code was output from the Python package 'SALib' (https://github.com/SALib/SALib), but other sensitivity output formatted in this manner could also be used. Depending on the type of sensitivity output not all methods of selecting significant parameters may apply.
 
-My intent is that the code can be easily hacked or changed by users if the current code does not allow the desired output. It is difficult to code all of the possible variants of the plot, but at least the code should be documented well enough sot hat if someone wants to add, remove, or restructure elements they can do it fairly easily.
+My intent is that the code can be easily hacked or changed by users if the current code does not allow the desired output. It is difficult to code all of the possible variants of the plot, but at least the code should be documented well enough so that if someone wants to add, remove, or restructure elements they can do it fairly easily.
+
+More details about the code and general structure are in 'DOCUMENTATION.md'.
