@@ -15,12 +15,13 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
                        ,line_col ='gray48'  # color used for lines
                        ,st_col = 'black'    # color for total-order index circle
                        ,s1_col = 'gray48'   # color for first-order index disk(filled circle)
-                       ,asp=1               # aspect ratio
                        ,varNameMult = 1.2   # location of variable name with respect to the plot radius
                        ,gpNameMult = 1.6    # location of the group name with respect to the plot radius
                        ,legLoc = 'topleft'  # legend location
                        ,legThick=c(0.1,0.5) # legend thickensses
                        ,legPos=1.9          # legend relative position
+                       ,res = 300           # resolution for the plot
+                       ,quality=90          # quality of the image
                        ){
   
   # finding number of points to plot
@@ -67,7 +68,19 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
     savePlot <- TRUE
     setEPS()
     postscript(fname)
-  }
+  }else if(plotType == 'PNG'){
+    fname <- paste(filename,'.png',sep='')
+    png(fname,res=res)
+    savePlot <- TRUE
+  }else if(plotType == 'PDF'){
+    fname <- paste(filename,'.pdf',sep='')
+    pdf(fname)
+    savePlot <- TRUE
+  }#else if(plotType == 'JPEG'){
+    #fname <- paste(filename,'.jpg',sep='')
+    #jpeg(fname,quality)
+    #savePlot <- TRUE
+  #}
   else{
     print('Plot not automatically saved')
     savePlot <- FALSE
