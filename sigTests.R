@@ -30,7 +30,7 @@ stat_sig_s1st <- function(df
   if(method == 'sig'){
     # testing for statistical significance using the confidence intervals
     df$s1_sig[which(abs(df$S1) - df$S1_conf > 0)] <- 1
-    df$s1_sig[which(abs(df$ST) - df$ST_conf > 0)] <- 1
+    df$st_sig[which(abs(df$ST) - df$ST_conf > 0)] <- 1
   }
   else if(method == 'gtr'){
     # finding indicies that are greater than the specified values
@@ -43,7 +43,7 @@ stat_sig_s1st <- function(df
   
   # determining whether the parameter is signficiant
   if(sigCri == 'either'){
-    df$sig[i] <- apply(cbind(df$s1_sig,df$st_sig),FUN=max,MARGIN=1)
+    df$sig <- apply(cbind(df$s1_sig,df$st_sig),FUN=max,MARGIN=1)
   }
   else if(sigCri == 'S1'){
     df$sig <- df$s1_sig
