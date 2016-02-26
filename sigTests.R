@@ -43,18 +43,18 @@ stat_sig_s1st <- function(df
   
   # determining whether the parameter is signficiant
   if(sigCri == 'either'){
-    for(i in 1:nrow(df)){
-      df$sig[i] <- max(df$s1_sig[i],df$st_sig[i])
-    }
+    df$sig[i] <- apply(cbind(df$s1_sig,df$st_sig),FUN=max,MARGIN=1)
   }
   else if(sigCri == 'S1'){
     df$sig <- df$s1_sig
   }
   else if(sigCri == 'ST'){
     df$sig <- df$st_sig
+  }else if(sigCri == 'both'){
+    df$sig <- df$st_sig*df$s1_sig
   }
   else{
-    print('Not a valid parameter for SigCri')
+    print('Not a valid parameter for sigCri')
   }
   
   # returned dataframe will have columns for the test of statistical significance
@@ -63,10 +63,10 @@ stat_sig_s1st <- function(df
 
 #####################################################
 # function to test statistical significane of S2 indices
-stat_sig_s2 <- function(dfs2
-                          ,dfs2Conf
-                          ,greater = 0.01
-                          ,method='sig'){
+stat_sig_s2 <- function(dfs2              # matrix/data frame of second-order indices
+                        ,dfs2Conf         # matrix/data frame of second-order indices confidence interval
+                        ,greater = 0.01
+                        ,method='sig'){
    
   # initializing matrix to return values
   s2_sig <- matrix(0,nrow(dfs2),ncol(dfs2))
@@ -84,6 +84,6 @@ stat_sig_s2 <- function(dfs2
     print('Not a valid parameter for method')
   }
   
-  # returned dataframe will have columns for the test of statistical significance
+  # returned dataframe will have 0's and 1's based on significance of values
   return(s2_sig)
 }
