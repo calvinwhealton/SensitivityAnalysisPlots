@@ -1,37 +1,46 @@
-The following document outlines the general structure and requirements of the code to create the first-, second-, and total-order sensitivity indices plots. Please lok at LICENSE.md and README.md before using the code. Look at 'example1.pdf' and 'example2.pdf' to determine if this code will generate the type of plot that you want.
+The following document outlines the general structure and requirements of the code to create the first-, second-, and total-order sensitivity indices plots. Please look at LICENSE.md and README.md before using the code. Look at 'example1.pdf' and 'example2.pdf' to determine if this code will generate the type of plot that you want.
 
 Functions in the scripts should have the inputs defined in the comments on the same line. The outline of the code follows the script 'radialConvergeTest.R'. I tried to heavily comment the code when necessary and make it approachable for users who have some familiarity with the plotting functions in R. If you have problems please check the example script and input files before contacting me or creating an issue.
 
-Step 0: Writing Sensitivity Analysis Output
+Step 0: Libraries and Working Directories
+-----
+Make sure that the following libraries are installed.
+
+`RColorBrewer` https://cran.r-project.org/web/packages/RColorBrewer/
+
+`graphics` https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/00Index.html
+
+`plotrix` https://cran.r-project.org/web/packages/plotrix/index.html
+
+Also, the sensitivity analysis output should be in the same working directory as the code. Set the working directory to this location. This will be the location where the plots are saved. (Note: you can change the working directory in the code depending on whether you are loading the functions, data, or saving output.)
+
+Step 1: Writing Sensitivity Analysis Output
 ------
 
-The script 'exampleFunctions.py' shows a basic example of how the results from a sensitivity analysis in Python performed using the SALib package (https://github.com/SALib/SALib) can be written to *.csv files. For a sensitivity analysis the key files are: summary of variables names, first- and total-order indices, and confidence of the indices; second-order indices in an upper triangular matrix form; and confidence of the second-order indices in an upper triangular matrix.
+The script 'exampleFunctions.py' shows a basic example of how the results from a sensitivity analysis in Python performed using the SALib package (https://github.com/SALib/SALib) can be written to *.csv files. For a sensitivity analysis the key files are: summary of variables names, first- and total-order indices, and confidence of the indices; second-order indices in an upper triangular matrix form, and confidence of the second-order indices in an upper triangular matrix.
 
-The sensitivity analysis must be written from Python so that R can read-in the files. I developed the code in R because I was more familar with R plots than Python plots, but I am currently working on a Python version of the function. Although it is a little troublesome, it does force you to save the output of your sensitivity analysis. Also, any sensitivity analysis formatted in the same way can be read-in to the R function, regardless of the software package used to generate the output.
+The sensitivity analysis written in this form so that R can read-in the files. The example input is given in: "S1ST_output.csv", "S2_output.csv", "S2_conf_output.csv".
 
-# Step 1: Reading-in Data
+# Step 2: Reading-in Data
 ------
 
-The first step is reading-in the data from a sensitivity analysis to R. The format for the sensitivity analysis output is based on the Python SALib package (https://github.com/SALib/SALib). This output is read-in to R as three variables, one for each file (described above). The one that contains the first- and total-order indices, names, etc., is the primary one used when creating the plots.
+The first step is reading-in the data from a sensitivity analysis to R. The format for the sensitivity analysis output is based on the Python SALib package (https://github.com/SALib/SALib). This output is read-in to R as three variables, one for each file (described above). The one that contains the first- and total-order indices, names, etc., is the primary one used when creating the plots. There are two other matrices, one with the second-order indices and one with the confidence intervals for the second-order indices.
 
-# Step 2: Define Significance
+Example files are: "S1ST_output.csv", "S2_output.csv", "S2_conf_output.csv".
+
+# Step 3: Defining Groups
 ------
 
-If there are many variables it is probably best to plot only the "significant" ones (see scripts in 'sigTests.R'). There are two main methods of defining significance: sensitivity index is statistically greater than zero or the sensitivity index is above a threshold value. Testing if the sensitivity index is statistically greater than zero requires a confidence interval on the index. Defining significance as greater than a threshold allows selecting variables that had a total-order index greater than 0.01, for example.
+Groups of variables need to be defined as a list in R. See the examples in the code.
 
-You can manually define which indices are significant by adding a column 'sig' to the data frame with the first- and total-order indices. For instance, you could want variables that are statistically significant and greater than 0.01, which would take the output of the two main types of criteria to define significance.
 
-#Step 3: Grouping Variables
+# Step 4: Plot Results
 ------
+The newest implementation of the code uses a single function call that determines which variables to plot and plots all of the variables. There are ~27 inputs to this function, but only four are required. The required inputs are the three data files read-in from the sensitivity analysis input and the list of group names.
 
-In the final plot the variables are assigned to groups. In the code each group must have a group name, a list of variables in the group (there are no checks for one variable being assigned to each group), and a group color. The function in 'groupAssign.R' takes the input data frame with first- and total-order indices and adds columns for the group name and the group color. These assignments of colors and names will be used in plotting.
+A first set of optional inputs is related to the significance criteria. The points plotted can be based on whether the first- or total-order, or both first- and total-order indices are significant. The ways of evaluating the significance are based on confidence intervals for the index or being above a threshold. Similar options are available for assessing the second-order indices.
 
-# Step 4: Plotting
-------
-
-The sensitivity analysis plots are done using the function in 'plotRadSAinds.R'. There are many graphical parameters, but the main ones are to control the dimensions of the plot and the relative size of the points. If the points look too bunched together then increase 'radSc' or decrease 'scaling'. There are options for automatically saving a *.eps file or displaying the results to the screen. I have plans to include more types of output images.
-
-One important note is that the plot draws circles and rectangles, not lines and points. Use of circles and rectangles means that scaling should be exact compared to using lines and points.
+The next major set of inputs is related to the graphical output. There are several parameters that can be changed including colors, relative size of points, legend values, and output format. The plot draws circles and rectangles, not lines and points. Use of circles and rectangles means that scaling should be exact compared to using lines and points, which often have a minimum size.
 
 The default value used when determining the relative size (width) of the circles and rectangles is based on the square root of the sensitivity index. The square root is used because circles are viewed as area, so if the total order index is twice the first-order the outside circle should have an area that is twice the inside circle (radius of outside is a factor of \sqrt{2} larger). This same scaling is preserved in the rectangle widths. If you want to change this to linear scaling (width proportional to the index) then change 'widthSc' to 1.
 
@@ -42,6 +51,65 @@ If you find the funcions useful or have suggestions about how they can be improv
 
 ## Detailed Function Documentation
 ------
+`evalPlotIndsRadCon()`
+------
+
+**_Inputs_**:
+
+**df**: data frame with the S1's, ST's, names of variables, and confidence intervals if using `s1stmeth = 'sig'`.
+
+**dfs2**: data frame/matrix with S2 values in upper triangular form. Values are assumed in the same order as the S1's and ST's.
+
+**dfs2Conf**: data frame/matrix with S2 confidence interval values in upper triangular form. Values are assumed in the same order as the S1'
+
+**gpNameList**: list with groups. The list is composed of group names with a vector of variables assigned to each. An example entry in the list would be `'group1' = c('x1','x2','x3')`, which would be interpreted as the group "group1" is composed of variables "x1", "x2", and "x3".
+
+**gpColList**: list of colors for each group. Default `col_list = NULL` implies that a Color Brewer palette will be used. User-specified entries should be of the form `'group1'='deepskyblue'`, which means that "group1" would be assigned a color of "deepskyblue".
+
+**s1stgtr**: used as threshold for evaluating significant indices when `s1stmeth ='gtr'`. Default `s1stgtr=0.01`, so all indices that are greater than 0.01 will be considered significant.
+
+**s1stmeth**: method for evaluating significance of indices. Default option is `s1stmeth='sig'` for index must be statistically significant based on the confidence intervals. Other option is `s1stmeth='gtr'` for index must be greater than a value to be significant.
+
+**s1stsigCri**: parameter for controling whether when a variable is significant for plotting. Default `s1stsigCri='either'` so that if either the first- or total-order index is significant the variable will be plotted. If `s1stsigCri='S1'` then only varibles with significant first-order indices will be plotted. If `s1stsigCri='ST'` then only variables with significant total-order indices will be plotted. If `s1stsigCri='both'` then both the first- and total-order indices must be significant for the variable to be plotted.
+
+**s2meth**: method for evaluating significance of indices. Default option is `s2meth ='sig'` for index must be statistically significant based on the confidence intervals. Other option is `s2meth ='gtr'` for index must be greater (absolute value greater) than a value to be significant.
+
+**s2gtr**: used as threshold for evaluating significant indices when `s2gtr ='gtr'`. Default `s2gtr =0.01`, so all indices that are greater than 0.01 will be considered significant.
+
+**ptTitle**: title for the plot. Default is `ptTitle = ''` for no title.
+
+**ptFileNm**: file name for the saved plot. Default `ptFileNm = 'plot'`. Do not include the file extension.
+
+**ptType**: format for saving the plot. Default `ptType = 'EPS'`. Other options include 'PNG' and 'PDF'.
+
+**ptS2**: should second-order indices be plotted (connecting lines). Default `ptS2 = TRUE'`.
+
+**ptRadSc**: radius scaling of plot. Default `ptRadSc = 2`. Increasing `ptRadSc` will increase the spacing between points.
+
+**ptScCirc**: scaling factor applied to individual circle and line sizes. Default `ptScCirc = 1`. Increasing `ptScCirc` will cause the points and lines to become wider, so closter together.
+
+**ptCircSc**: power used when scaling the width of circles and lines. Default `ptCircSc = 0.5` for square root, so area of the circles is proportional to the index. If `ptCircSc = 1` then the diameter of the circules would be proportional to the index.
+
+**ptSTthick**: value used to assign thickness of the total-order sensitivity index circle. Default `ptSTthick = 0.05`. Increasing `ptSTthick` makes the  total-order index circles thicker.
+
+**ptLineCol**: color for the lines. Default `ptLineCol = 'gray48'`.
+
+**ptStcol**: color for the total-order index ring. Default `ptStcol = 'black'`.
+
+**ptS1col**: color for the first-order index circile. Default `ptS1col = 'gray48'`.
+
+**ptVarNmMult**: location of the variable name with respect to the radius of the plot. Default `ptVarNmMult = 1.2`. Increasing the value will move the names farther away from the circles.
+
+**gpNmMult**: location of the group name with respect to the radius of the plot. Default `gpNmMult = 1.6`. Increasing the value will move the names farther away from the circles.
+
+**ptLegLoc**: legend location. Default `ptLegLoc = 'topleft'`. Other options are 'bottomright', 'bottomleft', and 'topright'.
+
+**ptLegPos**: legend relative position. Default `ptLegPos = 1.9`.
+
+**ptRes**: resolution of the plot for .png files. Default `ptRes=100`. If getting errors about figure margins change this parameter.
+
+**ptQual**: quality of the jpeg file in % of the original. Default `ptQual = 90`. Currently not used because jpegs not generated.
+
 
 `gp_name_col()`
 ------
@@ -51,7 +119,7 @@ Purpose: assign group information to all variables.
 
 **name_list**: list with groups. The list is composed of group names with a vector of variables assigned to each. An example entry in the list would be `'group1' = c('x1','x2','x3')`, which would be interpreted as the group "group1" is composed of variables "x1", "x2", and "x3".
 
-**col_list**: list of colors for each group. Entries should be of the form `'group1'='deepskyblue'`, which means that "group1" would be assigned a color of "deepskyblue".
+**col_list**: list of colors for each group. Default `col_list = NULL` implies that a Color Brewer palette will be used. User-specified entries should be of the form `'group1'='deepskyblue'`, which means that "group1" would be assigned a color of "deepskyblue".
 
 **df**: data frame with the first- and total-order indices, and the name of the input varaibles.
 
@@ -75,7 +143,7 @@ Purpose: create radial convergence plot.
 
 **filename**: file name for the saved plot. Default `filename = 'plot'`. Do not include the file extension.
 
-**plotType**: format for saving the plot. Default `plotType = 'EPS'`.
+**plotType**: format for saving the plot. Default `plotType = 'EPS'`. Other options include 'PNG' and 'PDF'.
 
 **plotS2**: should second-order indices be plotted (connecting lines). Default `plotS2 = TRUE'`.
 
@@ -93,8 +161,6 @@ Purpose: create radial convergence plot.
 
 **s1_col**: color for the first-order index circile. Default `s1_col = 'gray48'`.
 
-**asp**: aspect ratio of the plot.
-
 **varNameMult**: location of the variable name with respect to the radius of the plot. Default `varNameMult = 1.2`. Increasing the value will move the names farther away from the circles.
 
 **gpNameMult**: location of the group name with respect to the radius of the plot. Default `gpNameMult = 1.6`. Increasing the value will move the names farther away from the circles.
@@ -102,6 +168,10 @@ Purpose: create radial convergence plot.
 **legLoc**: legend location. Default `legLoc = 'topleft'`. Other options are 'bottomright', 'bottomleft', and 'topright'.
 
 **legPos**: legend relative position. Default `legPos = 1.9`.
+
+**res**: resolution of the plot for .png files. Default `res=100`. If getting errors about figure margins change this parameter.
+
+**quality**: quality of the jpeg file in % of the original. Default `quality = 90`. Currently not used because jpegs not generated.
 
 `stat_sig_s1st()`
 
