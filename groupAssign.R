@@ -1,7 +1,7 @@
 # functions for substituting group information into dataframe
 
 # function for assigning group name and color to group
-gp_name_col <- function(name_list  # list of variables names for each group
+gp_name_col <- function(name_list   # list of variables names for each group
                         ,col_list   # list of colors for each group
                         ,df         # data frame of values with ind as the variable name
                         ){
