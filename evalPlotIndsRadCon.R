@@ -25,7 +25,7 @@ evalPlotIndsRadCon <- function(df                   # data frame of S1 and ST in
                                ,ptLegLoc = 'topleft'# legend location
                                ,ptLegTh=c(0.1,0.5)  # legend thickensses
                                ,ptLegPos=1.9        # relative location of legend
-                               ,ptRes=300           # resolution for the plot file
+                               ,ptRes=100           # resolution for the plot file
                                ,ptQual=90           # quality of a JPG
   
 ){

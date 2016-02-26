@@ -20,7 +20,7 @@ plotRadCon <- function(df                   # dataframe with S1 and ST indices
                        ,legLoc = 'topleft'  # legend location
                        ,legThick=c(0.1,0.5) # legend thickensses
                        ,legPos=1.9          # legend relative position
-                       ,res = 300           # resolution for the plot
+                       ,res = 100           # resolution for the plot
                        ,quality=90          # quality of the image
                        ){
   
