@@ -1,6 +1,6 @@
 **Calvin is cleaning up his code repositories. This has been moved to https://github.com/calvinwhealton/DataVisSpecialPlots. This code will not be updated in the future.**
 
-**This code is offered under the MIT License. See LICENSE.md for more details.Please cite this repository as (year of latest commit, commit ID, and date retrieved should be substituted into the format):
+**This code is offered under the MIT License. See LICENSE.md for more details.Please cite this repository as (year of latest commit, commit ID, and date retrieved should be substituted into the format):**
 
 Whealton, C.A. (\<year>). "DataVisSpecialPlots-Scripts and Functions for Data Visualization and Specialized Plots ". GitHub repository. https://github.com/calvinwhealton/SensitivityAnalysisPlots \<commit ID>, retrieved \<date>.
 
