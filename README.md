@@ -1,3 +1,9 @@
+**Calvin is cleaning up his code repositories. This has been moved to https://github.com/calvinwhealton/DataVisSpecialPlots. This code will not be updated in the future.**
+
+**This code is offered under the MIT License. See LICENSE.md for more details.Please cite this repository as (year of latest commit, commit ID, and date retrieved should be substituted into the format):
+
+Whealton, C.A. (\<year>). "DataVisSpecialPlots-Scripts and Functions for Data Visualization and Specialized Plots ". GitHub repository. https://github.com/calvinwhealton/SensitivityAnalysisPlots \<commit ID>, retrieved \<date>.
+
 This repository contains code for displaying results of sensitivity analysis, specifically plots that have first-, second-, and total-order indices. Example plots are given in: "exam2.eps", "exam2.pdg", "exam2.png", "exam3.eps", and "plot.eps". The file "radialConvergeTest.R" provides examples of calling the function. Please read the licence before using the code.
 
 This code is designed to generate plots that show the results of sensitivity analysis by showing first-, total- and second-order indices at the same time. The plots are structured so that each variable has a location on the edge of a circle. At this location the first-order index and the total-order index are plotted, with the first-order index being a filled circle and the total-order index being a "halo" around it. The second-order indices are plotted as connecting lines between the points. The width of all of the plotting element (lines, points) are proportional to the sensitivity index. Examples of similar plots can be seen in Butler et al (2014), but the plots in that paper were not generated with the code in this repository.
